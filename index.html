@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#4CAF50" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192x192.png" type="image/png" />
+  <title>Super Organização</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Super Organização 🛒</h1>
+
+    <form id="task-form">
+      <input type="text" id="title" placeholder="Título da tarefa" required />
+      <input type="text" id="responsible" placeholder="Responsável" required />
+      <input type="date" id="deadline" required />
+      <textarea id="description" placeholder="Descrição da tarefa" required></textarea>
+      <button type="submit">Adicionar Tarefa</button>
+    </form>
+
+    <button id="theme-toggle">Alternar Tema</button>
+
+    <h2>Tarefas Atuais</h2>
+    <ul id="task-list"></ul>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('✅ Service Worker registrado!', reg))
+        .catch(err => console.error('❌ Erro ao registrar o SW:', err));
+    }
+  </script>
+</body>
+</html>
+
+
