@@ -41,17 +41,42 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+
+
+
+self.addEventListener('push', function(event) {
+    const options = {
+      body: event.data.text(),
+      icon: '/icons/icon-192x192.png',
+      badge: '/icons/badge-72x72.png'
+    };
+  
+    event.waitUntil(
+      self.registration.showNotification('Nova Notificação!', options)
+    );
+  });
+  
+
+
+
+
 // Interceptar requisições e servir o conteúdo do cache, se não houver conexão
 self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request);
-    })
-  );
-});
+    event.respondWith(
+        caches.match(event.request)
+          .then(cached => cached || fetch(event.request)
+          .then(response => {
+            // Opcional: cache dinâmico para novas requisições
+            return caches.open(CACHE_NAME)
+              .then(cache => {
+                cache.put(event.request, response.clone());
+                return response;
+              });
+          })
+      );}
+
+      
+
 
 // Push Notifications (opcional, caso você implemente notificações push)
 self.addEventListener("push", (event) => {

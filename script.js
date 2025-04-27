@@ -37,6 +37,7 @@ taskForm.addEventListener("submit", (e) => {
   const responsible = document.getElementById("responsible").value;
   const deadline = document.getElementById("deadline").value;
   const description = document.getElementById("description").value;
+  
 
   const task = {
     id: Date.now(),
@@ -44,6 +45,7 @@ taskForm.addEventListener("submit", (e) => {
     responsible,
     deadline,
     description,
+    done: false
   };
 
   saveTask(task);
@@ -81,19 +83,6 @@ function displayTask(task) {
   taskList.appendChild(li);
 }
 
-// Remover tarefa
-function removeTask(id) {
-    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    const updatedTasks = tasks.filter(t => t.id !== id);
-    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
-  
-    const li = document.getElementById(`task-${id}`);
-    if (li) li.remove();
-  
-    // Chama a notificação após a remoção da tarefa
-    notifyTaskRemoved(id);  // Notificação de remoção da tarefa
-  }
-  
   // Notificação de remoção de tarefa
   function notifyTaskRemoved(id) {
     // Busca a tarefa pelo ID
@@ -130,6 +119,38 @@ function notifyTaskCreated(task) {
     });
   }
 }
+if ("Notification" in window) {
+    // O navegador suporta notificações
+  }
+  window.addEventListener('load', function () {
+    if (Notification.permission === "default") {
+      // Solicita permissão se o usuário ainda não tiver respondido à solicitação
+      Notification.requestPermission().then(function(permission) {
+        if (permission === "granted") {
+          console.log("Permissão concedida para notificações!");
+          // Agora você pode enviar notificações
+        } else {
+          console.log("Permissão negada para notificações.");
+        }
+      });
+    }
+  });
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').then(function(registration) {
+      console.log("Service Worker registrado com sucesso:", registration);
+    }).catch(function(error) {
+      console.log("Falha ao registrar o Service Worker:", error);
+    });
+  }
+  const date = new Date(task.deadline + "T00:00:00"); // Adiciona horário
+
+
+  function showNotification() {
+    if (Notification.permission === "granted") {
+      new Notification("Sua tarefa foi concluída!");
+    }
+  }
+  
 
 function removeTask(id) {
     const task = getTaskById(id);
@@ -150,7 +171,7 @@ function removeTask(id) {
   }
   
 
-function displayTask(task) {
+  function displayTask(task) {
     const li = document.createElement("li");
     li.id = `task-${task.id}`;
     li.classList.toggle("done", task.done);
@@ -158,7 +179,7 @@ function displayTask(task) {
     li.innerHTML = `
       <div style="display: flex; align-items: center; justify-content: space-between;">
         <label style="display: flex; align-items: center; gap: 0.5rem;">
-          <input type="checkbox" onchange="toggleDone(${task.id})" ${task.done ? 'checked' : ''} />
+          <input type="checkbox" onchange="toggleDone(${task.id})" ${task.done ? 'checked' : ''}/>
           Concluído?
         </label>
         <button onclick="removeTask(${task.id})" style="background: red;">Remover</button>
@@ -172,20 +193,25 @@ function displayTask(task) {
     taskList.appendChild(li);
   }
   
-  
-
-
   function toggleDone(id) {
     const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    const index = tasks.findIndex(t => t.id === id);
-    if (index !== -1) {
-      tasks[index].done = !tasks[index].done;
+    const task = tasks.find(t => t.id === id);
+    
+    if (task) {
+      task.done = !task.done;
       localStorage.setItem("tasks", JSON.stringify(tasks));
-      taskList.innerHTML = '';
-      tasks.forEach(displayTask);
+      
+      // Atualiza apenas o item modificado em vez de recarregar toda a lista
+      const taskElement = document.getElementById(`task-${id}`);
+      if (taskElement) {
+        taskElement.classList.toggle("done", task.done);
+        const checkbox = taskElement.querySelector('input[type="checkbox"]');
+        if (checkbox) {
+          checkbox.checked = task.done;
+        }
+      }
     }
   }
-  
 
   
 // Função para pegar uma tarefa pelo ID

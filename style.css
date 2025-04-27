@@ -1,109 +1,139 @@
 :root {
-    --bg-color: #f9f9f9;
-    --text-color: #333;
-    --primary-color: #4CAF50;
-    --input-bg: #ffffff;
-    --card-shadow: rgba(0, 0, 0, 0.1);
-  }
-  
-  body.dark {
-    --bg-color: #121212;
-    --text-color: #eee;
-    --input-bg: #1e1e1e;
-    --card-shadow: rgba(255, 255, 255, 0.05);
-  }
-  
-  body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 2rem;
-    transition: all 0.3s ease;
-  }
-  
-  .container {
-    max-width: 700px;
-    margin: auto;
-    background-color: var(--input-bg);
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px var(--card-shadow);
-  }
-  
-  h1 {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-  
-  form {
-    margin-bottom: 2rem;
-  }
-  
-  input, textarea {
-    width: 100%;
-    padding: 0.8rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ccc;
-    background-color: var(--input-bg);
-    color: var(--text-color);
-    border-radius: 8px;
-    font-size: 1rem;
-  }
-  
-  button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  
-  button:hover {
-    background-color: #45a049;
-  }
-  
-  #theme-toggle {
-    margin-bottom: 2rem;
-  }
-  
-  ul#task-list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  ul#task-list li {
-    background-color: var(--input-bg);
-    padding: 1.2rem;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px var(--card-shadow);
-    position: relative;
-  }
-  
-  ul#task-list li.done {
-    text-decoration: line-through;
-    opacity: 0.7;
-  }
-  
-  ul#task-list li button {
-    background-color: red;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    position: absolute;
-    right: 1rem;
-    top: 1rem;
-    font-size: 0.9rem;
-  }
-  
-  label {
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
+  --bg-color: #f9f9f9;
+  --text-color: #333;
+  --primary-color: #4CAF50;
+  --input-bg: #ffffff;
+  --card-shadow: rgba(0, 0, 0, 0.1);
+}
+
+body.dark {
+  --bg-color: #121212;
+  --text-color: #eee;
+  --input-bg: #1e1e1e;
+  --card-shadow: rgba(255, 255, 255, 0.05);
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+.container {
+  max-width: 700px;
+  margin: auto;
+  background-color: var(--input-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px var(--card-shadow);
+  word-wrap: break-word;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+form {
+  margin-bottom: 2rem;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  box-sizing: border-box;
+}
+
+button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+#theme-toggle {
+  margin-bottom: 2rem;
+}
+
+ul#task-list {
+  list-style: none;
+  padding: 0;
+}
+
+ul#task-list li {
+  background-color: var(--input-bg);
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px var(--card-shadow);
+  position: relative;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+ul#task-list li.done {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.task-content {
+  margin-right: 80px;
+  padding-right: 10px;
+}
+
+.task-meta {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  opacity: 0.8;
+  flex-wrap: wrap;
+}
+/* Adicione ao seu arquivo CSS existente */
+.done {
+  opacity: 0.7;
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.done strong {
+  text-decoration: line-through;
+}
+ul#task-list li button {
+  background-color: red;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  font-size: 0.9rem;
+}
+
+label {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
