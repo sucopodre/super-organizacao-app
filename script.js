@@ -39,6 +39,7 @@ taskForm.addEventListener('submit', async function (e) {
   const taskData = { title, responsible, deadline, description };
 
   try {
+    // Envia a tarefa para o Google Apps Script
     const response = await fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -69,7 +70,7 @@ taskForm.addEventListener('submit', async function (e) {
 // Mostrar tarefa na tela
 function displayTask(task) {
   const li = document.createElement("li");
-  li.innerHTML = `
+  li.innerHTML = ` 
     <strong>${task.title}</strong><br>
     Responsável: ${task.responsible}<br>
     Vencimento: ${task.deadline}<br>
