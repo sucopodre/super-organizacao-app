@@ -1,31 +1,29 @@
-const CACHE_NAME = "super-organizacao-cache-v1";
+const CACHE_NAME = "super-organizacao-cache-v2"; // Atualizado para v2
 const urlsToCache = [
   "/",
   "/index.html",
-  "/style.css",
+  "/styles.css", // Corrigido para 'styles.css' (consistente com seu HTML)
   "/script.js",
   "/manifest.json",
-  "/icons/icon-72x72.png",
-  "/icons/icon-96x96.png",
-  "/icons/icon-128x128.png",
-  "/icons/icon-144x144.png",
-  "/icons/icon-152x152.png",
-  "/icons/icon-192x192.png",
-  "/icons/icon-384x384.png",
+  "/icons/icon-192x192.png", // Mantenha apenas os ícones essenciais
   "/icons/icon-512x512.png"
 ];
 
-// Instalar o Service Worker
+// Instalação do Service Worker
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log("Cacheando arquivos essenciais");
-      return cache.addAll(urlsToCache);
-    })
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        console.log("[Service Worker] Cacheando recursos estáticos");
+        return cache.addAll(urlsToCache);
+      })
+      .catch((err) => {
+        console.error("[Service Worker] Falha ao cachear recursos:", err);
+      })
   );
 });
 
-// Ativar o Service Worker e limpar cache antigo
+// Ativação e Limpeza de Cache Antigo
 self.addEventListener("activate", (event) => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
@@ -33,6 +31,7 @@ self.addEventListener("activate", (event) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (!cacheWhitelist.includes(cacheName)) {
+            console.log("[Service Worker] Removendo cache antigo:", cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -41,53 +40,70 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-
-
-
-self.addEventListener('push', function(event) {
-    const options = {
-      body: event.data.text(),
-      icon: '/icons/icon-192x192.png',
-      badge: '/icons/badge-72x72.png'
-    };
-  
-    event.waitUntil(
-      self.registration.showNotification('Nova Notificação!', options)
-    );
-  });
-  
-
-
-
-
-// Interceptar requisições e servir o conteúdo do cache, se não houver conexão
+// Estratégia de Cache (Cache First)
 self.addEventListener("fetch", (event) => {
-    event.respondWith(
-        caches.match(event.request)
-          .then(cached => cached || fetch(event.request)
-          .then(response => {
-            // Opcional: cache dinâmico para novas requisições
-            return caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, response.clone());
-                return response;
+  // Ignora requisições que não sejam GET
+  if (event.request.method !== "GET") return;
+
+  event.respondWith(
+    caches.match(event.request)
+      .then((cachedResponse) => {
+        // Retorna do cache se disponível
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+
+        // Busca na rede
+        return fetch(event.request)
+          .then((response) => {
+            // Verifica se a resposta é válida
+            if (!response || response.status !== 200 || response.type !== "basic") {
+              return response;
+            }
+
+            // Faz cache dinâmico da resposta
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME)
+              .then((cache) => {
+                cache.put(event.request, responseToCache);
               });
+
+            return response;
           })
-      );}
+          .catch(() => {
+            // Fallback para páginas offline
+            if (event.request.headers.get("accept").includes("text/html")) {
+              return caches.match("/offline.html");
+            }
+          });
+      })
+  );
+});
 
-      
-
-
-// Push Notifications (opcional, caso você implemente notificações push)
+// Push Notifications (Versão Unificada)
 self.addEventListener("push", (event) => {
-  const data = event.data.json();
-  const options = {
-    body: data.body,
-    icon: "icons/icon-192x192.png",
-    badge: "icons/icon-72x72.png"
-  };
+  let notificationData;
   
+  try {
+    notificationData = event.data.json();
+  } catch (e) {
+    notificationData = {
+      title: "Nova notificação",
+      body: event.data.text() || "Você tem uma nova atualização"
+    };
+  }
+
+  const options = {
+    body: notificationData.body,
+    icon: "/icons/icon-192x192.png",
+    badge: "/icons/icon-72x72.png",
+    vibrate: [200, 100, 200]
+  };
+
   event.waitUntil(
-    self.registration.showNotification(data.title, options)
+    self.registration.showNotification(
+      notificationData.title || "Super Organização", 
+      options
+    )
   );
 });

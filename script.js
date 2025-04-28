@@ -9,7 +9,84 @@ window.addEventListener("load", () => {
   loadTheme();
   requestNotificationPermission();  // Solicitar permissão de notificação
 });
+// Adicione no início do arquivo, após as referências aos elementos
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('SW registrado:', registration.scope);
+      })
+      .catch(err => {
+        console.log('Falha no registro do SW:', err);
+      });
+  });
+}
+document.getElementById('task-form').addEventListener('submit', async function (e) {
+  e.preventDefault();
 
+  const title = document.getElementById('title').value;
+  const responsible = document.getElementById('responsible').value;
+  const deadline = document.getElementById('deadline').value;
+  const description = document.getElementById('description').value;
+
+  const taskData = {
+    title: title,
+    responsible: responsible,
+    deadline: deadline,
+    description: description
+  };
+
+  try {
+    const response = await fetch('AKfycbzR6J1AM58gdWQFbRAE2hERu5phnKNhLLoRBxuj-uXg', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(taskData),
+    });
+
+    const result = await response.json();
+
+    if (result.result === "sucesso") {
+      // Exibe a tarefa na lista de tarefas no site
+      const taskList = document.getElementById('task-list');
+      const taskItem = document.createElement('li');
+      taskItem.textContent = `${title} - ${responsible} - ${deadline} - ${description}`;
+      taskList.appendChild(taskItem);
+
+      // Limpa o formulário
+      document.getElementById('task-form').reset();
+    }
+  } catch (error) {
+    console.error('Erro ao adicionar a tarefa:', error);
+  }
+});
+
+// Corrigir a função scheduleNotification
+function scheduleNotification(task) {
+  if (!("Notification" in window)) return;
+
+  // Verifica se a data é válida
+  if (!task.deadline) return;
+  
+  const deadlineDate = new Date(task.deadline);
+  if (isNaN(deadlineDate.getTime())) return;
+
+  const now = new Date();
+  const timeout = deadlineDate.getTime() - now.getTime() - (3600000); // 1 hora antes
+
+  if (timeout > 0) {
+    setTimeout(() => {
+      if (Notification.permission === "granted") {
+        new Notification("Lembrete de Tarefa", {
+          body: `${task.title} - ${task.description}`,
+          icon: "icons/icon-192x192.png",
+          vibrate: [200, 100, 200]
+        });
+      }
+    }, timeout);
+  }
+}
 // Solicitar permissão para notificações
 function requestNotificationPermission() {
   if ("Notification" in window && Notification.permission !== "granted") {
@@ -56,6 +133,30 @@ taskForm.addEventListener("submit", (e) => {
   taskForm.reset();
 });
 
+const CACHE_NAME = 'super-organizacao-v1';
+const ASSETS = [
+  '/',
+  '/index.html',
+  '/styles.css',
+  '/script.js',
+  '/manifest.json',
+  '/icons/icon-192x192.png',
+  '/icons/icon-512x512.png'
+];
+
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(ASSETS))
+  );
+});
+
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request)
+      .then(response => response || fetch(e.request))
+  );
+});
 // Salvar tarefa no localStorage
 function saveTask(task) {
   const tasks = JSON.parse(localStorage.getItem("tasks")) || [];

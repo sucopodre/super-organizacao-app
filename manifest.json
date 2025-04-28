@@ -2,6 +2,7 @@
   "name": "Super Organização",
   "short_name": "Organização",
   "description": "App para organizar as tarefas diárias no supermercado.",
+  "id": "/",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -12,7 +13,12 @@
   "categories": ["productivity", "organization"],
   "prefer_related_applications": false,
   "scope": "/",
+  "scope_extensions": [],
   "iarc_rating_id": "NOT_RATED",
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "related_applications": [],
   "icons": [
     {
       "src": "icons/icon-72x72.png",
@@ -53,6 +59,20 @@
       "src": "icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/screenshot1.webp",
+      "sizes": "1280x720",
+      "type": "image/webp",
+      "label": "Tela principal do aplicativo"
+    },
+    {
+      "src": "screenshots/screenshot2.webp",
+      "sizes": "1920x1080",
+      "type": "image/webp",
+      "label": "Adicionando nova tarefa"
     }
   ]
 }
