@@ -4,7 +4,7 @@ const taskList = document.getElementById("task-list");
 const themeToggle = document.getElementById("theme-toggle");
 
 // URL do seu Web App do Google Apps Script
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxhrg1FkcfHnaJdC4n7cS3CY3F8rntGgpFVzzESsiahKbB3yoOu9mXLrHtzOEWV3lbMlw/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzR6J1AM58gdWQFbRAE2hERu5phnKNhLLoRBxuj-uXg/dev';
 
 // Carregar tarefas e tema ao iniciar
 window.addEventListener("load", () => {
