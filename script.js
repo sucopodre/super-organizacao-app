@@ -40,14 +40,6 @@ function registerServiceWorker() {
       });
   }
 }
-const response = await fetch(GOOGLE_SCRIPT_URL, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(taskData),
-});
-
-const data = await response.json();  // Tenta converter a resposta em JSON
-console.log(data);  // Verifique o conteúdo retornado
 
 // Manipulador de envio do formulário
 taskForm.addEventListener('submit', async function (e) {
@@ -67,7 +59,6 @@ taskForm.addEventListener('submit', async function (e) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(taskData),
     });
-    
 
     // Verifica se a resposta é válida
     if (!response.ok) {
