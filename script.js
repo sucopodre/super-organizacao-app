@@ -54,7 +54,7 @@ taskForm.addEventListener('submit', async function (e) {
 
   try {
     // Envia a tarefa para o Google Apps Script
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
+    const response = await fetch('https://script.google.com/macros/s/AKfycbxhrg1FkcfHnaJdC4n7cS3CY3F8rntGgpFVzzESsiahKbB3yoOu9mXLrHtzOEWV3lbMlw/exec', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(taskData),
@@ -124,7 +124,7 @@ function notifyTaskCreated(task) {
   if (Notification.permission === "granted") {
     new Notification("Nova Tarefa Criada!", {
       body: `Tarefa: ${task.title}`,
-      icon: "icons/logo_192x192.png",
+      icon: "/icons/logo_192x192.png",
     });
   }
 }
