@@ -14,6 +14,20 @@ window.addEventListener("load", () => {
   registerServiceWorker();
 });
 
+// Função para salvar tarefa no localStorage
+function saveTask(task) {
+  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  tasks.push(task);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+// Solicitar permissão para notificações
+function requestNotificationPermission() {
+  if ("Notification" in window && Notification.permission !== "granted") {
+    Notification.requestPermission();
+  }
+}
+
 // Função para registrar o Service Worker
 function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
@@ -46,20 +60,24 @@ taskForm.addEventListener('submit', async function (e) {
       body: JSON.stringify(taskData),
     });
 
-    const result = await response.json();
+    if (response.ok) {
+      const result = await response.json();
 
-    if (result.result === "sucesso") {
-      // Exibe na lista
-      displayTask(taskData);
-      // Salva localmente
-      saveTask(taskData);
-      // Notificação
-      notifyTaskCreated(taskData);
-      // Limpa o formulário
-      taskForm.reset();
-      alert("Tarefa enviada e salva!");
+      if (result.result === "sucesso") {
+        // Exibe na lista
+        displayTask(taskData);
+        // Salva localmente
+        saveTask(taskData);
+        // Notificação
+        notifyTaskCreated(taskData);
+        // Limpa o formulário
+        taskForm.reset();
+        alert("Tarefa enviada e salva!");
+      } else {
+        alert("Erro ao salvar tarefa no servidor.");
+      }
     } else {
-      alert("Erro ao salvar tarefa no servidor.");
+      throw new Error('Erro na resposta do servidor');
     }
   } catch (error) {
     console.error('Erro ao enviar:', error);
@@ -70,20 +88,13 @@ taskForm.addEventListener('submit', async function (e) {
 // Mostrar tarefa na tela
 function displayTask(task) {
   const li = document.createElement("li");
-  li.innerHTML = ` 
+  li.innerHTML = `
     <strong>${task.title}</strong><br>
     Responsável: ${task.responsible}<br>
     Vencimento: ${task.deadline}<br>
     ${task.description}
   `;
   taskList.appendChild(li);
-}
-
-// Salvar no localStorage
-function saveTask(task) {
-  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  tasks.push(task);
-  localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 // Carregar tarefas do localStorage
@@ -103,13 +114,6 @@ function loadTheme() {
   const savedTheme = localStorage.getItem("theme");
   if (savedTheme === "dark") {
     document.body.classList.add("dark");
-  }
-}
-
-// Solicitar permissão de notificação
-function requestNotificationPermission() {
-  if ("Notification" in window && Notification.permission !== "granted") {
-    Notification.requestPermission();
   }
 }
 
