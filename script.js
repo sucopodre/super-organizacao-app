@@ -54,30 +54,32 @@ taskForm.addEventListener('submit', async function (e) {
 
   try {
     // Envia a tarefa para o Google Apps Script
-const response = await fetch('https://script.google.com/macros/s/AKfycbxhrg1FkcfHnaJdC4n7cS3CY3F8rntGgpFVzzESsiahKbB3yoOu9mXLrHtzOEWV3lbMlw/exec', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(taskData),
-});
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(taskData),
+    });
 
-    if (response.ok) {
-      const result = await response.json();
+    // Verifica se a resposta é válida
+    if (!response.ok) {
+      throw new Error(`Erro na resposta do servidor: ${response.status}`);
+    }
 
-      if (result.result === "sucesso") {
-        // Exibe na lista
-        displayTask(taskData);
-        // Salva localmente
-        saveTask(taskData);
-        // Notificação
-        notifyTaskCreated(taskData);
-        // Limpa o formulário
-        taskForm.reset();
-        alert("Tarefa enviada e salva!");
-      } else {
-        alert("Erro ao salvar tarefa no servidor.");
-      }
+    // Tenta converter a resposta em JSON
+    const result = await response.json();
+
+    if (result.result === "sucesso") {
+      // Exibe na lista
+      displayTask(taskData);
+      // Salva localmente
+      saveTask(taskData);
+      // Notificação
+      notifyTaskCreated(taskData);
+      // Limpa o formulário
+      taskForm.reset();
+      alert("Tarefa enviada e salva!");
     } else {
-      throw new Error('Erro na resposta do servidor');
+      alert("Erro ao salvar tarefa no servidor.");
     }
   } catch (error) {
     console.error('Erro ao enviar:', error);
@@ -115,39 +117,6 @@ function loadTheme() {
   if (savedTheme === "dark") {
     document.body.classList.add("dark");
   }
-}
-try {
-  // Envia a tarefa para o Google Apps Script
-  const response = await fetch(GOOGLE_SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(taskData),
-  });
-
-  // Verifica se a resposta é válida
-  if (!response.ok) {
-    throw new Error(`Erro na resposta do servidor: ${response.status}`);
-  }
-
-  // Tenta converter a resposta em JSON
-  const result = await response.json();
-
-  if (result.result === "sucesso") {
-    // Exibe na lista
-    displayTask(taskData);
-    // Salva localmente
-    saveTask(taskData);
-    // Notificação
-    notifyTaskCreated(taskData);
-    // Limpa o formulário
-    taskForm.reset();
-    alert("Tarefa enviada e salva!");
-  } else {
-    alert("Erro ao salvar tarefa no servidor.");
-  }
-} catch (error) {
-  console.error('Erro ao enviar:', error);
-  alert("Erro de conexão.");
 }
 
 // Notificar nova tarefa
