@@ -83,7 +83,7 @@ taskForm.addEventListener('submit', async function (e) {
     }
   } catch (error) {
     console.error('Erro ao enviar:', error);
-    alert("Erro de conexão.");
+    alert("Erro: " + error.message);
   }
 });
 
