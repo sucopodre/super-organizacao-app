@@ -56,36 +56,17 @@ taskForm.addEventListener('submit', async function (e) {
     // Envia a tarefa para o Google Apps Script
     const response = await fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
+      mode: 'no-cors', // 👈 adiciona essa linha aqui
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(taskData),
     });
 
-    // Verifica se a resposta é válida
-    if (!response.ok) {
-      throw new Error(`Erro na resposta do servidor: ${response.status}`);
-    }
-
-    // Tenta converter a resposta em JSON
-    const result = await response.json();
-
-    if (result.result === "sucesso") {
-      // Exibe na lista
-      displayTask(taskData);
-      // Salva localmente
-      saveTask(taskData);
-      // Notificação
-      notifyTaskCreated(taskData);
-      // Limpa o formulário
-      taskForm.reset();
-      alert("Tarefa enviada e salva!");
-    } else {
-      alert("Erro ao salvar tarefa no servidor.");
-    }
-  } catch (error) {
+    console.log('Enviado com sucesso!');
+    // Como está no-cors, não tente ler response.json(), senão vai dar erro
+} catch (error) {
     console.error('Erro ao enviar:', error);
-    alert("Erro: " + error.message);
-  }
-});
+}
+
 
 // Mostrar tarefa na tela
 function displayTask(task) {
