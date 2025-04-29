@@ -54,11 +54,12 @@ taskForm.addEventListener('submit', async function (e) {
 
   try {
     // Envia a tarefa para o Google Apps Script
-    const response = await fetch('https://script.google.com/macros/s/AKfycbxhrg1FkcfHnaJdC4n7cS3CY3F8rntGgpFVzzESsiahKbB3yoOu9mXLrHtzOEWV3lbMlw/exec', {
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(taskData),
     });
+    
 
     // Verifica se a resposta é válida
     if (!response.ok) {
